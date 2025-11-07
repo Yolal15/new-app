@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: automated-maintenance-suite
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: automated-maintenance-suite
+  template:
+    metadata:
+      labels:
+        app: automated-maintenance-suite
+    spec:
+      containers:
+        - name: app
+          image: skmds/automated-maintenance-suite:latest  # replace with your Docker image
+          ports:
+            - containerPort: 80
