@@ -6,4 +6,3 @@ COPY . .
 RUN npm run build
 EXPOSE 80
 CMD ["npm", "start"]
-version 1
