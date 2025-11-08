@@ -1,0 +1,40 @@
+pipeline {
+    agent any
+    stages {
+        stage('Clone Repo') {
+            steps {
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/main']],
+                    userRemoteConfigs: [[url: 'https://github.com/Yolal15/new-app']]
+                ])
+            }
+        }
+        stage('Install and Build') {
+            steps {
+                dir('frontend') { // Change 'frontend' if your package.json is elsewhere
+                    bat 'npm install'
+                    bat 'npm run build'
+                }
+            }
+        }
+   stage('Build docker image') {
+  steps {
+    dir('frontend') {
+      bat 'docker build --no-cache -t sailal/testdocker .'
+    }
+  }
+}
+
+stage('Push image to hub') {
+  steps {
+    withCredentials([string(credentialsId: 'dockpwd', variable: 'dockerpwd')]) {
+      bat """
+        docker login -u sailal -p ${dockerpwd}
+        docker push sailal/testdocker
+      """
+    }
+  }
+}
+    }
+}
