@@ -1,23 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: new-app-deployment
+  labels:
+    app: new-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: new-app
+  template:
+    metadata:
+      labels:
+        app: new-app
+    spec:
+      containers:
+        - name: new-app-container
+          image: sailal/testdocker:latest
+          ports:
+            - containerPort: 80
+          imagePullPolicy: Always
 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: new-app-service
+  labels:
+    app: new-app
+spec:
+  type: LoadBalancer
+  selector:
+    app: new-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
 
-services:
-  frontend:
-    build: ./frontend
-    ports:
-      - "8080:80"
-
-  backend:
-    build: ./backend
-    ports:
-      - "5000:5000"
-    depends_on:
-      - database
-
-  database:
-    build: ./database
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: mydatabase
-    ports:
-      - "5432:5432"
