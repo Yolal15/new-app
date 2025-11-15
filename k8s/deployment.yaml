@@ -1,19 +1,38 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: automated-maintenance-suite
+  name: new-app-deployment
+  labels:
+    app: new-app
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
-      app: automated-maintenance-suite
+      app: new-app
   template:
     metadata:
       labels:
-        app: automated-maintenance-suite
+        app: new-app
     spec:
       containers:
-        - name: app
-          image: skmds/automated-maintenance-suite:latest  # replace with your Docker image
+        - name: new-app-container
+          image: sailal/testdocker:latest
           ports:
             - containerPort: 80
+          imagePullPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: new-app-service
+  labels:
+    app: new-app
+spec:
+  type: LoadBalancer
+  selector:
+    app: new-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
